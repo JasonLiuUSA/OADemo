@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class name="com.jason.model.User" table="user">
+      <meta attribute="class-description">
+         This class contains the user details. 
+      </meta>
+      <id name="id" type="long" column="id">
+         <generator class="native"/>
+      </id>
+      <!--这个type是java的type，还是MySQL的？如果是Java的话，怎么不认Date这种type? -->
+      <property name="username" column="username" type="string" />
+      <property name="name" column="name" type="string"/>
+      <property name="age" column="age" type="int"/>
+      <property name="date" column="date" type="date"/>
+   </class>
+</hibernate-mapping>	

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- This is used for spring integration -->
+	<!-- <bean id="user1" class="com.jason.model.User"> -->
+	<!-- <property name="name" value="Jason" /> -->
+	<!-- <property name="username" value="root" /> -->
+	<!-- </bean> -->
+
+
+	<!--spring 调用hibernate -> c3p0 -> database -->
+	<!-- below is c3po configuration -->
+	<bean id="c3p0" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<!-- 数据连库接信息 -->
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql:///oa" />
+		<property name="user" value="root" />
+		<property name="password" value="" />
+		<!--c3p0连接池其他配置 -->
+		<!-- 连接池中保留的最小连接数 -->
+		<property name="minPoolSize" value="15" />
+		<!-- 连接池中保留的最大连接数 -->
+		<property name="maxPoolSize" value="200" />
+		<!-- 控制数据源内加载的PrepareStatment数量，这是一个缓存 -->
+		<property name="maxStatements" value="100" />
+	</bean>
+
+
+	<!-- 与hibernate整合,创建一个bean来配置SessionFactory -->
+	<!-- 这个bean内容的provider不是自己写的class,而是spring.orm里面的 -->
+	<!-- 这里用hibernate5.LocalSessionFactoryBean是因为我们maven导入的hibernate是5.x -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 为spring.orm指定hibernate的配置文件路径, -->
+		<!-- tell spring that where is the hibernate configuration file，Spring才能读到hibernate -->
+		<property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+		<!-- dataSource是hibernate的一个属性，用于数据库连接池，位于org.springframework.orm.hibernate5.LocalSessionFactoryBean包中 -->
+		<!--这里配置一个c3p0的数据库连接池,连接池的配置信息请看bean id ="dataSource" -->
+		<property name="dataSource" ref="c3p0"></property>
+	</bean>
+
+	<!-- 配置声明式事务管理，hibernate5.HibernateTransactionManager进行事务管理 -->
+	<!-- 这样就不需要hibernate再写一个sessionfactory, open session, begin transaction -->
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 声明式事务,将会对事务管理采用注解的方式 -->
+	<tx:annotation-driven transaction-manager="txManager"/>
+	
+	<!-- 自动扫描与装配，还可以扫描多个包，用逗号分开 -->
+	<context:component-scan base-package="com.jason" />
+	<context:annotation-config />
+</beans>

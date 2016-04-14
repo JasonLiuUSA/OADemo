@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 配置为开发者模式devMode，这样无需publish即可观看效果 -->
+<!-- 	<constant name="struts.devMode" value="true" /> -->
+
+	<!-- 约定把扩展名配置为.action，这样好区别于别的 -->
+	<constant name="struts.action.extension" value="action" />
+
+	<!-- 把主题配置为simple，这样有利于UI自定义样式 -->
+	<constant name="struts.ui.theme" value="simple" />
+
+	<package name="default" namespace="/" extends="struts-default">
+		<!-- 配置测试用的Action，还未与Spring整合,class要写上全名.test只是action的一个代号，可以改的。在浏览器输入的时候测试用-->
+<!-- 		<action name="test" class="com.jason.test.TestAction"> -->
+		<!-- 当Struts2与Spring整合后，class属性可以写成bean的名称 -->
+		<action name="test" class="testAction">
+			<result name="success">/test.jsp</result>
+		</action>
+	</package>
+
+</struts>
